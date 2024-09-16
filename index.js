@@ -6,8 +6,25 @@ require('dotenv').config();
 const app = express();
 const port = process.env.PORT || 3000;
 
+// app.use(cors({
+//   origin: process.env.FRONTEND_URL || 'https://mandelbrot.com.ar'
+// }));
+
+
+const allowedOrigins = ['https://mandelbrot.com.ar', 'http://localhost:3001'];
+
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'https://mandelbrot.com.ar'
+  origin: function(origin, callback){
+    // allow requests with no origin 
+    // (like mobile apps or curl requests)
+    if(!origin) return callback(null, true);
+    if(allowedOrigins.indexOf(origin) === -1){
+      var msg = 'The CORS policy for this site does not ' +
+                'allow access from the specified Origin.';
+      return callback(new Error(msg), false);
+    }
+    return callback(null, true);
+  }
 }));
 app.use(express.json());
 
@@ -26,7 +43,7 @@ app.post('/api/enviar-contacto', async (req, res) => {
 
   try {
     await transporter.sendMail({
-      from: `"Tu Sitio Web" <${process.env.SMTP_USER}>`,
+      from: `"Mandelbrot" <${process.env.SMTP_USER}>`,
       to: process.env.DESTINO_EMAIL,
       subject: "Nuevo mensaje de contacto",
       text: `Nombre: ${nombre}\nEmail: ${email}\nMensaje: ${mensaje}`,
