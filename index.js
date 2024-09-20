@@ -40,9 +40,16 @@ const transporter = nodemailer.createTransport({
 });
 
 app.post('/api/enviar-contacto', async (req, res) => {
+  console.log('Recibida solicitud de contacto:', req.body);
   const { nombre, email, mensaje } = req.body;
 
+  if (!nombre || !email || !mensaje) {
+    console.log('Datos incompletos');
+    return res.status(400).json({ message: 'Faltan datos requeridos' });
+  }
+
   try {
+    console.log('Intentando enviar email...');
     await transporter.sendMail({
       from: `"Mandelbrot" <${process.env.SMTP_USER}>`,
       to: process.env.DESTINO_EMAIL,
@@ -53,10 +60,11 @@ app.post('/api/enviar-contacto', async (req, res) => {
              <p><strong>Mensaje:</strong> ${mensaje}</p>`,
     });
 
+    console.log('Email enviado con éxito');
     res.status(200).json({ message: 'Email enviado con éxito' });
   } catch (error) {
-    console.error('Error al enviar email:', error);
-    res.status(500).json({ message: 'Error al enviar email' });
+    console.error('Error detallado al enviar email:', error);
+    res.status(500).json({ message: 'Error al enviar email', error: error.message });
   }
 });
 
