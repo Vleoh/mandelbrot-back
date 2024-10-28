@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 // }));
 
 
-const allowedOrigins = ['https://mandelbrot.com.ar', 'http://localhost:3001','http://localhost:3000','https://vleoh.github.io'];
+const allowedOrigins = ['https://mandelbrot.com.ar', 'http://localhost:3001','http://localhost:3000','https://vleoh.github.io', 'https://mandelbrot-graph.vercel.app'];
 
 
 app.use(cors({
